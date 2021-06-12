@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const HttpError = require('./utils/http-error');
+const keywordsRoute = require('./routes/keywords-route');
 
 const app = express();
 
@@ -22,9 +23,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.get('/', (req, res) => {
-  res.send('Hello from nodeserver!');
-});
+app.use('/api/keywords', keywordsRoute);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route', 404);
