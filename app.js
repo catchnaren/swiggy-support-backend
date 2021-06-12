@@ -8,10 +8,46 @@ const app = express();
 
 app.use(express.json());
 
+const whitelist = ['http://localhost:3000'];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
+
 app.get('/', (req, res) => {
   res.send('Hello from nodeserver!');
 });
 
-app.listen(5000, () => {
-  console.log('Listening on port 5000');
+app.use((req, res, next) => {
+  const error = new HttpError('Could not find this route', 404);
+  throw error;
 });
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+  res.status(error.code || 500);
+  res.json({ message: error.message || 'An unknown error occurred!' });
+});
+
+mongoose
+  .connect(
+    `mongodb+srv://catchnaren:0fhY2aWVYvLwxAeO@cluster0.2jlm2.mongodb.net/swiggy-support?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    app.listen(5000, () => {
+      console.log('Listening on port 5000');
+    });
+  })
+  .catch(err => {
+    console.log(err);
+  });
