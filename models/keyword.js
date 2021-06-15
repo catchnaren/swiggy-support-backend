@@ -4,14 +4,8 @@ const Schema = mongoose.Schema;
 
 const keywordSchema = new Schema(
   {
-    keyword: { type: String, required: true },
-    description: { type: String },
-    textSnippets: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
+    keywordText: { type: String, required: true },
+    textSnippet: { type: String, required: true },
   },
   { timestamps: true }
 );
